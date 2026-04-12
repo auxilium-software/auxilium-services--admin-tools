@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.Security.Cryptography;
 
 namespace AuxiliumServices.AdminTools.Tools;
 
@@ -44,6 +45,7 @@ public sealed class CreateAdminUserTool(IConfiguration configuration, IPasswordS
 
         var userId = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.User);
 
+        var preHashedPassword = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(password));
         var hashedPassword = passwordService.HashPassword(password);
 
         var user = new UserEntityModel

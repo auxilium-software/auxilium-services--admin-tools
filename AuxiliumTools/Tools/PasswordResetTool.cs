@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.Security.Cryptography;
 
 namespace AuxiliumServices.AdminTools.Tools
 {
@@ -59,7 +60,8 @@ namespace AuxiliumServices.AdminTools.Tools
             }
 
 
-            var hashedPassword = passwordService.HashPassword(newPassword);
+            var preHashedPassword = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(newPassword));
+            var hashedPassword = passwordService.HashPassword(preHashedPassword);
 
             user.PasswordHash = hashedPassword;
             user.LastUpdatedAt = DateTime.UtcNow;
