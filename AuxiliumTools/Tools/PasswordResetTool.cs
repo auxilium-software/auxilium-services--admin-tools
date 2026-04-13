@@ -60,7 +60,7 @@ namespace AuxiliumServices.AdminTools.Tools
             }
 
 
-            var preHashedPassword = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(newPassword));
+            var preHashedPassword = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(newPassword)).ToString();
             var hashedPassword = passwordService.HashPassword(preHashedPassword);
 
             user.PasswordHash = hashedPassword;

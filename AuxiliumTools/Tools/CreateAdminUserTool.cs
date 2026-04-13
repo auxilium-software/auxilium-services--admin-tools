@@ -13,7 +13,10 @@ using System.Security.Cryptography;
 
 namespace AuxiliumServices.AdminTools.Tools;
 
-public sealed class CreateAdminUserTool(IConfiguration configuration, IPasswordService passwordService) : AsyncCommand
+public sealed class CreateAdminUserTool(
+    IConfiguration configuration,
+    IPasswordService passwordService
+) : AsyncCommand
 {
     public override async Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
@@ -24,14 +27,14 @@ public sealed class CreateAdminUserTool(IConfiguration configuration, IPasswordS
 
         var email = AnsiConsole.Ask<string>("[green]Email:[/]");
 
-        var password = AnsiConsole.Prompt(
+        var rawPassword = AnsiConsole.Prompt(
             new TextPrompt<string>("[green]Password:[/]")
                 .PromptStyle("red")
                 .Secret());
 
         var fullName = AnsiConsole.Ask<string>("[green]Full Name:[/]");
 
-        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(fullName))
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(rawPassword) || string.IsNullOrWhiteSpace(fullName))
         {
             AnsiConsole.MarkupLine("[red]Error: All fields are required.[/]");
             return 1;
@@ -45,8 +48,8 @@ public sealed class CreateAdminUserTool(IConfiguration configuration, IPasswordS
 
         var userId = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.User);
 
-        var preHashedPassword = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(password));
-        var hashedPassword = passwordService.HashPassword(password);
+        var normalisedPassword = passwordService.NormalisePassword(rawPassword, null);
+        var hashedPassword = passwordService.HashPassword(normalisedPassword);
 
         var user = new UserEntityModel
         {
