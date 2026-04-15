@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AuxiliumSoftware.AuxiliumServices.Common" Version="3.0.26.3" />
+		<PackageReference Include="AuxiliumSoftware.AuxiliumServices.Common" Version="3.0.26.5" />
 		<PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
 	</ItemGroup>
 </Project>
