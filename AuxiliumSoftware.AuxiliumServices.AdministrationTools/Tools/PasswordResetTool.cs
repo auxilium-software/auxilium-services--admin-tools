@@ -1,4 +1,4 @@
-﻿using AuxiliumServices.AdminTools.Common;
+﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Common;
 using AuxiliumSoftware.AuxiliumServices.Common.Services;
 using AuxiliumSoftware.AuxiliumServices.Common.Services.Implementations;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Security.Cryptography;
 
-namespace AuxiliumServices.AdminTools.Tools
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tools
 {
     public class PasswordResetTool(IConfiguration configuration, IPasswordService passwordService) : AsyncCommand
     {

@@ -1,4 +1,4 @@
-﻿using AuxiliumServices.AdminTools.Common;
+﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Common;
 using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework.EntityModels;
 using AuxiliumSoftware.AuxiliumServices.Common.Enumerators;
 using AuxiliumSoftware.AuxiliumServices.Common.Services;
@@ -11,7 +11,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 using System.Security.Cryptography;
 
-namespace AuxiliumServices.AdminTools.Tools;
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tools;
 
 public sealed class CreateAdminUserTool(
     IConfiguration configuration,
@@ -67,6 +67,7 @@ public sealed class CreateAdminUserTool(
             IsCaseWorker = false,
             IsCaseWorkerManager = false,
             AllowLogin = true,
+            MustChangePassword = false,
             HasEmailAddressBeenVerified = true,
             CreatedAt = DateTime.UtcNow,
             CreatedBy = null,

@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<StartupObject>AuxiliumServices.AdminTools.Program</StartupObject>
+		<StartupObject>AuxiliumSoftware.AuxiliumServices.AdministrationTools.Program</StartupObject>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
-namespace AuxiliumServices.AdminTools.Infrastructure
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure
 {
     internal sealed class TypeResolver(IServiceProvider provider) : ITypeResolver, IDisposable
     {

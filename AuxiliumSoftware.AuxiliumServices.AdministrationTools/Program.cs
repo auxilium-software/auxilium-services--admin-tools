@@ -1,12 +1,12 @@
-﻿using AuxiliumServices.AdminTools.Infrastructure;
-using AuxiliumServices.AdminTools.Tools;
+﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure;
+using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tools;
 using AuxiliumSoftware.AuxiliumServices.Common.Services;
 using AuxiliumSoftware.AuxiliumServices.Common.Services.Implementations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
-namespace AuxiliumServices.AdminTools;
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools;
 
 internal class Program
 {

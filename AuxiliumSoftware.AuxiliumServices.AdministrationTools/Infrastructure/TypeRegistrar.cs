@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AuxiliumServices.AdminTools.Infrastructure
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure
 {
     internal sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
     {

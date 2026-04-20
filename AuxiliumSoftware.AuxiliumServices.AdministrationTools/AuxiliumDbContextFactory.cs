@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace AuxiliumServices.AdminTools;
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools;
 
 public class AuxiliumDbContextFactory : IDesignTimeDbContextFactory<AuxiliumDbContext>
 {

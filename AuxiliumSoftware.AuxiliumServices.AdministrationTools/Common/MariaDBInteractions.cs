@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AuxiliumServices.AdminTools.Common
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Common
 {
     internal static class MariaDBInteractions
     {
