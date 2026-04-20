@@ -48,6 +48,18 @@ internal class Program
                 .WithDescription("Resets a user's password.");
         });
 
+        try
+        {
+            var provider = services.BuildServiceProvider();
+            var tool = provider.GetRequiredService<CreateAdminUserTool>();
+            Console.WriteLine($"Resolution OK: {tool.GetType().Name}");
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"DI Resolution failed: {ex}");
+            return 1;
+        }
+
         return app.Run(remainingArgs);
     }
 

@@ -1,6 +1,6 @@
 
 .vs/
 *.user
-/AuxiliumTools/obj
-/AuxiliumTools/bin
-/AuxiliumTools/Migrations
+/AuxiliumSoftware.AuxiliumServices.AdministrationTools/obj
+/AuxiliumSoftware.AuxiliumServices.AdministrationTools/bin
+/AuxiliumSoftware.AuxiliumServices.AdministrationTools/Migrations
