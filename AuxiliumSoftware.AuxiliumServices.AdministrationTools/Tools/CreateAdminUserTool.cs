@@ -72,7 +72,9 @@ public sealed class CreateAdminUserTool(
             CreatedAt = DateTime.UtcNow,
             CreatedBy = null,
             LastUpdatedAt = null,
-            LastUpdatedBy = null
+            LastUpdatedBy = null,
+            DeletionRequested = false,
+            DeletionRequestReason = null,
         };
 
         var userWhitelist = new SystemWafUserWhitelistEntryEntityModel
