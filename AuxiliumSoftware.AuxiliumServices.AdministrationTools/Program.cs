@@ -42,10 +42,9 @@ internal class Program
 
         app.Configure(config =>
         {
-            config.AddCommand<CreateAdminUserTool>("create-admin")
-                .WithDescription("Creates an admin user.");
-            config.AddCommand<PasswordResetTool>("password-reset")
-                .WithDescription("Resets a user's password.");
+            config.AddCommand<CreateAdminUserTool>("create-administrator-user")             .WithDescription("Creates an Administrator user.");
+            config.AddCommand<PasswordResetTool>("reset-user-password")                     .WithDescription("Resets a user's password.");
+            config.AddCommand<SetInitialSystemSettingsTool>("set-initial-system-settings")  .WithDescription("Sets the initial system settings.");
         });
 
         try
