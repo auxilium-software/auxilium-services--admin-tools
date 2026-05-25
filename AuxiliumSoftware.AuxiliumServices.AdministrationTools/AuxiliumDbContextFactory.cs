@@ -43,7 +43,7 @@ public class AuxiliumDbContextFactory : IDesignTimeDbContextFactory<AuxiliumDbCo
         optionsBuilder.UseMySql(
             connectionString,
             ServerVersion.AutoDetect(connectionString),
-            b => b.MigrationsAssembly("AuxiliumServices.AdminTools")
+            b => b.MigrationsAssembly("AuxiliumSoftware.AuxiliumServices.AdministrationTools")
         );
 
         return new AuxiliumDbContext(optionsBuilder.Options);
