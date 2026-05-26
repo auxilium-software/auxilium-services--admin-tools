@@ -25,7 +25,9 @@ RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 RUN mkdir -p /etc/auxilium
 
-ENTRYPOINT ["dotnet", "ef", "database", "update", "--", "--config-path", "/etc/auxilium/config.yaml"]
+ENTRYPOINT ["dotnet", "ef", "database", "update", \
+            "--project", "AuxiliumSoftware.AuxiliumServices.AdministrationTools", \
+            "--", "--config-path", "/etc/auxilium/config.yaml"]
 
 
 # dev
