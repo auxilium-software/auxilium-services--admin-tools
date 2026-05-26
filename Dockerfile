@@ -14,6 +14,17 @@ COPY . .
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
 
+# migrate - SDK stays in image, dotnet-ef pre-installed at build time
+FROM restore AS migrate
+
+COPY . .
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+RUN mkdir -p /etc/auxilium
+
+ENTRYPOINT ["dotnet", "ef", "database", "update", "--", "--config-path", "/etc/auxilium/config.yaml"]
+
+
 # dev
 FROM restore AS dev
 
