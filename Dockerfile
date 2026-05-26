@@ -3,7 +3,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS restore
 
 WORKDIR /src
-COPY *.csproj ./
+COPY *.sln ./
+COPY AuxiliumSoftware.AuxiliumServices.AdministrationTools/*.csproj \
+    AuxiliumSoftware.AuxiliumServices.AdministrationTools/
 RUN dotnet restore
 
 
@@ -11,7 +13,8 @@ RUN dotnet restore
 FROM restore AS publish
 
 COPY . .
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj \
+    -c Release -o /app/publish --no-restore
 
 
 # migrate - SDK stays in image, dotnet-ef pre-installed at build time
