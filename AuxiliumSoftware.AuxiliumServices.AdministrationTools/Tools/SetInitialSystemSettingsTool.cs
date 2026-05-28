@@ -35,6 +35,7 @@ public sealed class SetInitialSystemSettingsTool(
             ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.Json,
             ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
         };
+        /*
         SystemSettingEntityModel instance_branding_logoRelativePath = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
@@ -55,6 +56,7 @@ public sealed class SetInitialSystemSettingsTool(
             ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.Json,
             ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
         };
+        */
         SystemSettingEntityModel instance_navigation_portalBaseUrl = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
@@ -65,12 +67,23 @@ public sealed class SetInitialSystemSettingsTool(
             ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.Json,
             ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
         };
+        SystemSettingEntityModel instance_fqdn = new()
+        {
+            Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = null,
+            ConfigKey = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingKeyEnum.Instance_Fqdn,
+            ConfigValue = AnsiConsole.Ask<string>("[green]instance.fqdn:[/]"),
+            ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.Json,
+            ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
+        };
 
 
         dbContext.System_Settings.Add(instance_branding_name);
-        dbContext.System_Settings.Add(instance_branding_logoRelativePath);
-        dbContext.System_Settings.Add(instance_branding_logoContrastRelativePath);
+        //dbContext.System_Settings.Add(instance_branding_logoRelativePath);
+        //dbContext.System_Settings.Add(instance_branding_logoContrastRelativePath);
         dbContext.System_Settings.Add(instance_navigation_portalBaseUrl);
+        dbContext.System_Settings.Add(instance_fqdn);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
