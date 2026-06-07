@@ -29,7 +29,7 @@ public sealed class SetInitialSystemSettingsTool(
         SystemSettingEntityModel instance_branding_name = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
-            CreatedAt = DateTime.UtcNow,
+            CreatedAtUtc = DateTime.UtcNow,
             CreatedBy = null,
             ConfigKey = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingKeyEnum.Instance_Branding_Name,
             ConfigValue = JsonSerializer.Serialize(AnsiConsole.Ask<string>("[green]instance.branding.name:[/]")),
@@ -39,7 +39,7 @@ public sealed class SetInitialSystemSettingsTool(
         SystemSettingEntityModel instance_navigation_portalBaseUrl = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
-            CreatedAt = DateTime.UtcNow,
+            CreatedAtUtc = DateTime.UtcNow,
             CreatedBy = null,
             ConfigKey = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingKeyEnum.Instance_Navigation_PortalBaseUrl,
             ConfigValue = JsonSerializer.Serialize(AnsiConsole.Ask<string>("[green]instance.navigation.portalBaseUrl:[/]")),
@@ -49,7 +49,7 @@ public sealed class SetInitialSystemSettingsTool(
         SystemSettingEntityModel instance_fqdn = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
-            CreatedAt = DateTime.UtcNow,
+            CreatedAtUtc = DateTime.UtcNow,
             CreatedBy = null,
             ConfigKey = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingKeyEnum.Instance_Fqdn,
             ConfigValue = JsonSerializer.Serialize(AnsiConsole.Ask<string>("[green]instance.fqdn:[/]")),

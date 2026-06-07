@@ -69,9 +69,9 @@ public sealed class CreateAdminUserTool(
             AllowLogin = true,
             MustChangePassword = false,
             HasEmailAddressBeenVerified = true,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAtUtc = DateTime.UtcNow,
             CreatedBy = null,
-            LastUpdatedAt = null,
+            LastUpdatedAtUtc = null,
             LastUpdatedBy = null,
             DeletionRequested = false,
             DeletionRequestReason = null,
@@ -80,7 +80,7 @@ public sealed class CreateAdminUserTool(
         var userWhitelist = new SystemWafUserWhitelistEntryEntityModel
         {
             Id = userId,
-            CreatedAt = DateTime.UtcNow,
+            CreatedAtUtc = DateTime.UtcNow,
             CreatedBy = userId,
             UserId = userId,
             JustificationForWhitelist = "Admin user created via admin tool",
