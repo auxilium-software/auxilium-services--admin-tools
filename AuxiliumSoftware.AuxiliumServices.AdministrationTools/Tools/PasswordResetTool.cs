@@ -65,7 +65,7 @@ namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tools
 
             user.PasswordHash = hashedPassword;
             user.LastUpdatedAtUtc = DateTime.UtcNow;
-            user.LastUpdatedBy = user.Id;
+            user.LastUpdatedByUserId = user.Id;
 
             await dbContext.SaveChangesAsync(cancellationToken);
 

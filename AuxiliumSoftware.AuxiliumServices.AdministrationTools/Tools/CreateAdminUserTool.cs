@@ -70,9 +70,9 @@ public sealed class CreateAdminUserTool(
             MustChangePassword = false,
             HasEmailAddressBeenVerified = true,
             CreatedAtUtc = DateTime.UtcNow,
-            CreatedBy = null,
+            CreatedByUserId = null,
             LastUpdatedAtUtc = null,
-            LastUpdatedBy = null,
+            LastUpdatedByUserId = null,
             DeletionRequested = false,
             DeletionRequestReason = null,
         };
@@ -81,7 +81,7 @@ public sealed class CreateAdminUserTool(
         {
             Id = userId,
             CreatedAtUtc = DateTime.UtcNow,
-            CreatedBy = userId,
+            CreatedByUserId = userId,
             UserId = userId,
             JustificationForWhitelist = "Admin user created via admin tool",
             IsPermanent = true,
