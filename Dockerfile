@@ -34,21 +34,12 @@ FROM restore AS migrate
 
 COPY . .
 
-RUN dotnet tool install \
-        --global \
-        dotnet-ef \
+RUN dotnet tool install --global dotnet-ef \
     && mkdir -p /etc/auxilium
 
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
-ENTRYPOINT [
-    "sh",
-    "-c",
-    "dotnet ef database update \
-        --project AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj \
-        -- \
-        --config-path /etc/auxilium/config.yaml"
-]
+ENTRYPOINT ["sh", "-c", "dotnet ef database update --project AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj -- --config-path /etc/auxilium/config.yaml"]
 
 
 # ==================================================
@@ -79,8 +70,4 @@ RUN mkdir -p /etc/auxilium \
 
 USER app
 
-ENTRYPOINT [
-    "dotnet",
-    "AuxiliumSoftware.AuxiliumServices.AdministrationTools.dll",
-    "--config-path", "/etc/auxilium/config.yaml"
-]
+ENTRYPOINT ["dotnet", "AuxiliumSoftware.AuxiliumServices.AdministrationTools.dll", "--config-path", "/etc/auxilium/config.yaml"]
