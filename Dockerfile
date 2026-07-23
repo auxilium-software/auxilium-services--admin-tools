@@ -1,52 +1,86 @@
 
+# ==================================================
 # restore dependencies
+# ==================================================
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS restore
 
 WORKDIR /src
+
 COPY *.sln ./
-COPY AuxiliumSoftware.AuxiliumServices.AdministrationTools/*.csproj \
-    AuxiliumSoftware.AuxiliumServices.AdministrationTools/
-RUN dotnet restore
+
+COPY AuxiliumSoftware.AuxiliumServices.AdministrationTools/*.csproj AuxiliumSoftware.AuxiliumServices.AdministrationTools/
+
+RUN dotnet restore AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj
 
 
+# ==================================================
 # publish
+# ==================================================
 FROM restore AS publish
 
 COPY . .
-RUN dotnet publish AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj \
-    -c Release -o /app/publish --no-restore
+
+RUN dotnet publish \
+    AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj \
+    --configuration Release \
+    --output /app/publish \
+    --no-restore
 
 
-# migrate - SDK stays in image, dotnet-ef pre-installed at build time
+# ==================================================
+# database migration
+# ==================================================
 FROM restore AS migrate
 
 COPY . .
-RUN dotnet tool install --global dotnet-ef
-ENV PATH="$PATH:/root/.dotnet/tools"
-RUN mkdir -p /etc/auxilium
 
-ENTRYPOINT ["sh", "-c", \
-    "dotnet ef migrations add InitialCreate \
-        --project AuxiliumSoftware.AuxiliumServices.AdministrationTools \
-        -- --config-path /etc/auxilium/config.yaml \
-        2>/dev/null || true \
-    && dotnet ef database update \
-        --project AuxiliumSoftware.AuxiliumServices.AdministrationTools \
-        -- --config-path /etc/auxilium/config.yaml"]
+RUN dotnet tool install \
+        --global \
+        dotnet-ef \
+    && mkdir -p /etc/auxilium
+
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+ENTRYPOINT [
+    "sh",
+    "-c",
+    "dotnet ef database update \
+        --project AuxiliumSoftware.AuxiliumServices.AdministrationTools/AuxiliumSoftware.AuxiliumServices.AdministrationTools.csproj \
+        -- \
+        --config-path /etc/auxilium/config.yaml"
+]
 
 
-# dev
+# ==================================================
+# development
+# ==================================================
 FROM restore AS dev
 
 ENV DOTNET_ENVIRONMENT=Development
-# source mounted at /src; drop into a shell and run commands manually
+
+RUN mkdir -p /etc/auxilium
+
 ENTRYPOINT ["/bin/sh"]
 
 
-# prod
+# ==================================================
+# production
+# ==================================================
 FROM mcr.microsoft.com/dotnet/runtime:10.0-alpine AS prod
 
 WORKDIR /app
-COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "AuxiliumSoftware.AuxiliumServices.AdministrationTools.dll"]
+COPY --from=publish /app/publish ./
+
+RUN mkdir -p /etc/auxilium \
+    && chown -R app:app \
+        /app \
+        /etc/auxilium
+
+USER app
+
+ENTRYPOINT [
+    "dotnet",
+    "AuxiliumSoftware.AuxiliumServices.AdministrationTools.dll",
+    "--config-path", "/etc/auxilium/config.yaml"
+]
