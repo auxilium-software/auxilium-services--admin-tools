@@ -1,4 +1,5 @@
 ﻿using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
+using AuxiliumSoftware.AuxiliumServices.Common.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -22,7 +23,7 @@ namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Common
             var optionsBuilder = new DbContextOptionsBuilder<AuxiliumDbContext>();
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 
-            return new AuxiliumDbContext(optionsBuilder.Options);
+            return new AuxiliumDbContext(optionsBuilder.Options, new TenantContextAccessor());
         }
     }
 }

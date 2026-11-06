@@ -20,7 +20,7 @@ namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tools
 
             var email = AnsiConsole.Ask<string>("[green]User Email:[/]");
 
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.EmailAddress == email, cancellationToken);
+            var user = await dbContext.WithinTenancy_Users.FirstOrDefaultAsync(u => u.EmailAddress == email, cancellationToken);
 
             if (user == null)
             {

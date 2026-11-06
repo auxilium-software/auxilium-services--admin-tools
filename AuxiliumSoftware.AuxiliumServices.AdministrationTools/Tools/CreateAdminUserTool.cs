@@ -40,13 +40,13 @@ public sealed class CreateAdminUserTool(
             return 1;
         }
 
-        if (await dbContext.Users.AnyAsync(u => u.EmailAddress == email, cancellationToken))
+        if (await dbContext.WithinTenancy_Users.AnyAsync(u => u.EmailAddress == email, cancellationToken))
         {
             AnsiConsole.MarkupLine($"[red]Error: A user with email '{email}' already exists.[/]");
             return 1;
         }
 
-        var userId = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.User);
+        var userId = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_User);
 
         var normalisedPassword = passwordService.NormalisePassword(rawPassword, null);
         var hashedPassword = passwordService.HashPassword(normalisedPassword);
@@ -87,8 +87,8 @@ public sealed class CreateAdminUserTool(
             IsPermanent = true,
         };
 
-        dbContext.Users.Add(user);
-        dbContext.System_Waf_UserWhitelist.Add(userWhitelist);
+        dbContext.WithinTenancy_Users.Add(user);
+        dbContext.WithinTenancy_System_Waf_UserWhitelist.Add(userWhitelist);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 

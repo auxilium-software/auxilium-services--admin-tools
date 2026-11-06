@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -21,12 +22,23 @@ public sealed class SetInitiallyRequiredData(
 {
     public override async Task<int> ExecuteAsync(CommandContext context, CancellationToken cancellationToken)
     {
+        AnsiConsole.MarkupLine("[bold blue]===== Set Initial System Settings =====[/]");
+        AnsiConsole.WriteLine();
 
         using var dbContext = MariaDBInteractions.GetDbContext(configuration);
 
-        dbContext.DataEnumerator_Enumerators.Add(new()
+        dbContext.WithinTenancy_System_Waf_IpWhitelist.Add(new()
         {
-            Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.System_SettingEntry),
+            Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
+            CreatedAtUtc = DateTime.UtcNow,
+            CreatedByUserId = null,
+            IpAddress = IPAddress.Loopback,
+            JustificationForWhitelist = "SYSTEM: Prevents the portal from blocking iteself",
+            IsPermanent = true,
+        });
+        dbContext.WithinTenancy_DataEnumerator_Enumerators.Add(new()
+        {
+            Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
             CreatedAtUtc = DateTime.UtcNow,
             CreatedByUserId = null,
             Scope = AuxiliumServices.Common.EntityFramework.Enumerators.DataEnumeratorScopeEnum.CalendarEventCategory,
