@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -37,7 +38,7 @@ public sealed class CreateTenant(
             Domain = AnsiConsole.Ask<string>("[green]Tenant Domain:[/]"),
             LifecycleStatus = AuxiliumServices.Common.EntityFramework.Enumerators.TenantLifecycleStatusEnum.Active,
         };
-        SystemSettingEntityModel instance_branding_name = new()
+        SystemSettingEntityModel instanceBrandingName = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
             TenantId = tenantId,
@@ -48,7 +49,7 @@ public sealed class CreateTenant(
             ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.String,
             ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
         };
-        SystemSettingEntityModel instance_navigation_portalBaseUrl = new()
+        SystemSettingEntityModel instancePortalBaseUrl = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
             TenantId = tenantId,
@@ -59,7 +60,7 @@ public sealed class CreateTenant(
             ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.String,
             ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
         };
-        SystemSettingEntityModel instance_fqdn = new()
+        SystemSettingEntityModel instanceFqdn = new()
         {
             Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
             TenantId = tenantId,
@@ -70,12 +71,32 @@ public sealed class CreateTenant(
             ValueType = AuxiliumServices.Common.EntityFramework.Enumerators.SystemSettingValueTypeEnum.String,
             ReasonForModification = "Set through the Admin Tools CLI by a server administrator.",
         };
+        SystemWafIpWhitelistEntryEntityModel ipWhitelistEntry = new()
+        {
+            Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
+            CreatedAtUtc = DateTime.UtcNow,
+            CreatedByUserId = null,
+            IpAddress = IPAddress.Loopback,
+            JustificationForWhitelist = "SYSTEM: Prevents the portal from blocking iteself",
+            IsPermanent = true,
+        };
+        DataEnumeratorEntityModel calendarEventCategory = new()
+        {
+            Id = UUIDUtilities.GenerateV5(objectType: DatabaseObjectTypeEnum.WithinTenancy_System_SettingEntry),
+            CreatedAtUtc = DateTime.UtcNow,
+            CreatedByUserId = null,
+            Scope = AuxiliumServices.Common.EntityFramework.Enumerators.DataEnumeratorScopeEnum.CalendarEventCategory,
+            CanonicalName = "/data-enumerator/builtin/calendar-event-category",
+            IsActive = true,
+        };
 
 
         dbContext.Global_Tenants.Add(tenant);
-        dbContext.WithinTenancy_System_Settings.Add(instance_branding_name);
-        dbContext.WithinTenancy_System_Settings.Add(instance_navigation_portalBaseUrl);
-        dbContext.WithinTenancy_System_Settings.Add(instance_fqdn);
+        dbContext.WithinTenancy_System_Settings.Add(instanceBrandingName);
+        dbContext.WithinTenancy_System_Settings.Add(instancePortalBaseUrl);
+        dbContext.WithinTenancy_System_Settings.Add(instanceFqdn);
+        dbContext.WithinTenancy_System_Waf_IpWhitelist.Add(ipWhitelistEntry);
+        dbContext.WithinTenancy_DataEnumerator_Enumerators.Add(calendarEventCategory);
 
         await dbContext.SaveChangesAsync(cancellationToken);
 
