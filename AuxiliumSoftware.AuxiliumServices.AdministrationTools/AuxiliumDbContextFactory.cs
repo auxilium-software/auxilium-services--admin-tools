@@ -1,8 +1,8 @@
-﻿using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
+﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Configuration;
+using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using AuxiliumSoftware.AuxiliumServices.Common.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools;
 
@@ -10,54 +10,25 @@ public class AuxiliumDbContextFactory : IDesignTimeDbContextFactory<AuxiliumDbCo
 {
     public AuxiliumDbContext CreateDbContext(string[] args)
     {
-        var configPath = ExtractConfigPath(args)
-            ?? Environment.GetEnvironmentVariable("AUXILIUM_CONFIG_PATH")
-            ?? throw new InvalidOperationException("Config path must be supplied via --config-path <path> or the AUXILIUM_CONFIG_PATH environment variable.");
+        var (configPath, _) = AdminToolsConfiguration.ExtractConfigPath(args);
 
-        var configuration = new ConfigurationBuilder()
-            .AddYamlFile(configPath, optional: false, reloadOnChange: false)
-            .Build();
+        if (configPath is null)
+        {
+            throw new InvalidOperationException(
+                $"Config path must be supplied via {AdminToolsConfiguration.ConfigPathArgument} <path> or the {AdminToolsConfiguration.ConfigPathEnvironmentVariable} environment variable."
+            );
+        }
 
-        var host     = configuration["Databases:MariaDB:Host"]     ?? throw new InvalidOperationException("MariaDB Host not found in configuration.");
-        var port     = configuration["Databases:MariaDB:Port"]     ?? throw new InvalidOperationException("MariaDB Port not found in configuration.");
-        var username = configuration["Databases:MariaDB:Username"] ?? throw new InvalidOperationException("MariaDB Username not found in configuration.");
-        var password = configuration["Databases:MariaDB:Password"] ?? throw new InvalidOperationException("MariaDB Password not found in configuration.");
-        var database = configuration["Databases:MariaDB:Database"] ?? throw new InvalidOperationException("MariaDB Database not found in configuration.");
-
-        var connectionString =
-            $"Server={host};"
-            + $"Port={port};"
-            + $"Database={database};"
-            + $"User={username};"
-            + $"Password={password};"
-            + $"CharSet=utf8mb4;"
-            + $"Pooling=true;"
-            + $"MinimumPoolSize=5;"
-            + $"MaximumPoolSize=100;"
-            + $"ConnectionLifeTime=300;"
-            + $"ConnectionIdleTimeout=180;"
-            + $"CancellationTimeout=5;"
-            + $"ConnectionReset=false;"
-            + $"DefaultCommandTimeout=30;";
+        var (_, configuration) = AdminToolsConfiguration.Load(configPath);
+        var connectionString = AdminToolsConfiguration.BuildConnectionString(configuration.Databases.MariaDB);
 
         var optionsBuilder = new DbContextOptionsBuilder<AuxiliumDbContext>();
         optionsBuilder.UseMySql(
             connectionString,
             ServerVersion.AutoDetect(connectionString),
-            b => b.MigrationsAssembly("AuxiliumSoftware.AuxiliumServices.AdministrationTools")
+            b => b.MigrationsAssembly(typeof(AuxiliumDbContextFactory).Assembly.GetName().Name)
         );
 
         return new AuxiliumDbContext(optionsBuilder.Options, new TenantContextAccessor());
-    }
-
-    private static string? ExtractConfigPath(string[] args)
-    {
-        var argList = args.ToList();
-        var index = argList.IndexOf("--config-path");
-
-        if (index == -1 || index + 1 >= argList.Count)
-            return null;
-
-        return argList[index + 1];
     }
 }

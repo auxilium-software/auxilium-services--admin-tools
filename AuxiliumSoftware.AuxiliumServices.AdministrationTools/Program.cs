@@ -1,7 +1,15 @@
-﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure;
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tools;
+﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands;
+using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Configuration;
+using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure;
+using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Services;
+using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
+using AuxiliumSoftware.AuxiliumServices.Common.Configuration;
+using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using AuxiliumSoftware.AuxiliumServices.Common.Services;
 using AuxiliumSoftware.AuxiliumServices.Common.Services.Implementations;
+using AuxiliumSoftware.AuxiliumServices.Common.Tenancy;
+using AuxiliumSoftware.AuxiliumServices.Common.Tenancy.TenantLookup;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
@@ -9,84 +17,108 @@ using Spectre.Console.Cli;
 
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools;
 
-internal class Program
+internal static class Program
 {
-    public static int Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
-        var (configPath, remainingArgs) = ExtractConfigPath(args);
+        var (configPath, remainingArgs) = AdminToolsConfiguration.ExtractConfigPath(args);
 
         if (configPath is null)
         {
-            Console.Error.WriteLine("Error: --config-path <path> is required.");
+            AnsiConsole.MarkupLine(
+                $"[red]Error: {AdminToolsConfiguration.ConfigPathArgument} <path> is required (or set {AdminToolsConfiguration.ConfigPathEnvironmentVariable}).[/]");
             return 1;
         }
 
-        IConfiguration configuration;
+        IConfiguration rawConfiguration;
+        ConfigurationStructure configuration;
         try
         {
-            configuration = new ConfigurationBuilder()
-                .AddYamlFile(configPath, optional: false, reloadOnChange: false)
-                .Build();
+            (rawConfiguration, configuration) = AdminToolsConfiguration.Load(configPath);
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error: Failed to load config from '{configPath}': {ex.Message}");
+            AnsiConsole.MarkupLineInterpolated($"[red]Error: Failed to load config from '{configPath}': {ex.Message}[/]");
             return 1;
         }
 
-        var services = new ServiceCollection();
-        services.AddSingleton(configuration);
-        services.AddTransient<IPasswordService, PasswordService>();
-        services.AddTransient<CreateAdminUserTool>();
-        services.AddTransient<PasswordResetTool>();
-
-        var registrar = new TypeRegistrar(services);
-        var app = new CommandApp(registrar);
+        var app = new CommandApp(new TypeRegistrar(ConfigureServices(rawConfiguration, configuration)));
 
         app.Configure(config =>
         {
-            config.AddCommand<CreateAdminUserTool>("create-administrator-user")         .WithDescription("Creates an Administrator user.");
-            config.AddCommand<PasswordResetTool>("reset-user-password")                 .WithDescription("Resets a user's password.");
-            config.AddCommand<CreateTenant>("create-tenant")                            .WithDescription("Sets the initial system settings.");
+            config.SetApplicationName("auxilium-admin-tools");
+            config.PropagateExceptions();
+
+            config.AddCommand<ListTenantsCommand>("list-tenants")
+                .WithDescription("Lists every tenant on this instance.");
+
+            config.AddCommand<CreateTenantCommand>("create-tenant")
+                .WithDescription("Creates a tenant with its first administrator, settings, WAF whitelist and built-in enumerators.")
+                .WithExample("create-tenant", "--domain", "portal.example.org");
+
+            config.AddCommand<CreateAdministratorUserCommand>("create-administrator-user")
+                .WithDescription("Creates an administrator user within a tenant.")
+                .WithExample("create-administrator-user", "--tenant", "portal.example.org");
+
+            config.AddCommand<ResetUserPasswordCommand>("reset-user-password")
+                .WithDescription("Resets a user's password within a tenant.")
+                .WithExample("reset-user-password", "--tenant", "portal.example.org");
         });
+
+        WriteBanner();
 
         try
         {
-            var provider = services.BuildServiceProvider();
-            var tool = provider.GetRequiredService<CreateAdminUserTool>();
-            Console.WriteLine($"Resolution OK: {tool.GetType().Name}");
+            return await app.RunAsync(remainingArgs);
+        }
+        catch (CommandAppException ex)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]Error: {ex.Message}[/]");
+            return 1;
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"DI Resolution failed: {ex}");
+            AnsiConsole.WriteException(ex, ExceptionFormats.ShortenPaths | ExceptionFormats.ShortenTypes);
             return 1;
         }
-
-        AnsiConsole.MarkupLine("""
-                                _ _ _                    _    ____                    _           _             _______          _     
-                /\             (_) (_)                  | |  |___ \          /\      | |         (_)           |__   __|        | |    
-               /  \  _   ___  ___| |_ _   _ _ __ ___    | |    __) |        /  \   __| |_ __ ___  _ _ __          | | ___   ___ | |___ 
-              / /\ \| | | \ \/ / | | | | | | '_ ` _ \   | |   |__ <        / /\ \ / _` | '_ ` _ \| | '_ \         | |/ _ \ / _ \| / __|
-             / ____ \ |_| |>  <| | | | |_| | | | | | |  | |   ___) |      / ____ \ (_| | | | | | | | | | |        | | (_) | (_) | \__ \
-            /_/    \_\__,_/_/\_\_|_|_|\__,_|_| |_| |_|  |_|  |____/      /_/    \_\__,_|_| |_| |_|_|_| |_|        |_|\___/ \___/|_|___/
-
-                                                                                                                                       
-            """);
-
-        return app.Run(remainingArgs);
     }
 
-    private static (string? ConfigPath, string[] RemainingArgs) ExtractConfigPath(string[] args)
+    private static ServiceCollection ConfigureServices(IConfiguration rawConfiguration, ConfigurationStructure configuration)
     {
-        var argList = args.ToList();
-        var index = argList.IndexOf("--config-path");
+        var services = new ServiceCollection();
 
-        if (index == -1 || index + 1 >= argList.Count)
-            return (null, args);
+        services.AddSingleton(rawConfiguration);
+        services.AddSingleton(configuration);
 
-        var configPath = argList[index + 1];
-        argList.RemoveRange(index, 2);
+        // Common's services log through ILogger<T>; no providers are added, so nothing interrupts the Spectre UI
+        services.AddLogging();
 
-        return (configPath, argList.ToArray());
+        services.AddSingleton<TenantContextAccessor>();
+        services.AddSingleton<ITenantContext>(sp => sp.GetRequiredService<TenantContextAccessor>());
+        services.AddSingleton<ITenantContextSetter>(sp => sp.GetRequiredService<TenantContextAccessor>());
+        services.AddSingleton<ITenantLookup, TenantLookup>();
+
+        var connectionString = AdminToolsConfiguration.BuildConnectionString(configuration.Databases.MariaDB);
+        services.AddDbContext<AuxiliumDbContext>(
+            options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
+            contextLifetime: ServiceLifetime.Singleton,
+            optionsLifetime: ServiceLifetime.Singleton);
+
+        services.AddSingleton<IPasswordService, PasswordService>();
+        services.AddSingleton<ISystemSettingsService, SystemSettingsService>();
+        services.AddSingleton<IWebApplicationFirewallService, WebApplicationFirewallService>();
+        services.AddSingleton<IDataEnumeratorService, DataEnumeratorService>();
+
+        services.AddSingleton<TenantSelector>();
+        services.AddSingleton<AdministratorAccountService>();
+
+        return services;
+    }
+
+    private static void WriteBanner()
+    {
+        AnsiConsole.Write(new FigletText("Auxilium|3").Color(Color.Blue));
+        AnsiConsole.MarkupLine("[grey]Administration Tools[/]");
+        AnsiConsole.WriteLine();
     }
 }
