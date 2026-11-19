@@ -86,6 +86,11 @@ internal static class Prompts
         return value;
     }
 
+    public static bool AskConfirmation(string message)
+    {
+        return AnsiConsole.Confirm($"[yellow]{Markup.Escape(message)}[/]", defaultValue: false);
+    }
+
     private static T AskTyped<T>(string label, object? defaultValue) where T : notnull
     {
         var prompt = new TextPrompt<T>($"[green]{Markup.Escape(label)}:[/]");
