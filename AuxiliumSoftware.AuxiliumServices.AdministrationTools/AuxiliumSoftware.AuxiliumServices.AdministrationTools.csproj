@@ -20,4 +20,10 @@
 		</PackageReference>
 		<PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="DemoData\demo-data.jsonc">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>
