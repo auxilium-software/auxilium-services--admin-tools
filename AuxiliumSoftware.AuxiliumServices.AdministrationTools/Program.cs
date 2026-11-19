@@ -1,5 +1,6 @@
 ﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Configuration;
+using AuxiliumSoftware.AuxiliumServices.AdministrationTools.DemoData;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Services;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
@@ -63,6 +64,11 @@ internal static class Program
             config.AddCommand<ResetUserPasswordCommand>("reset-user-password")
                 .WithDescription("Resets a user's password within a tenant.")
                 .WithExample("reset-user-password", "--tenant", "portal.example.org");
+
+            config.AddCommand<PopulateWithDemoDataCommand>("populate-with-demo-data")
+                .WithDescription("Fills a tenant with fictional users, cases, messages and calendar events from a JSON file.")
+                .WithExample("populate-with-demo-data", "--tenant", "demo.example.org")
+                .WithExample("populate-with-demo-data", "--tenant", "demo.example.org", "--file", "./my-demo-data.json");
         });
 
         WriteBanner();
@@ -108,9 +114,14 @@ internal static class Program
         services.AddSingleton<ISystemSettingsService, SystemSettingsService>();
         services.AddSingleton<IWebApplicationFirewallService, WebApplicationFirewallService>();
         services.AddSingleton<IDataEnumeratorService, DataEnumeratorService>();
+        services.AddSingleton<ICaseDocumentService, CaseDocumentService>();
+        services.AddSingleton<IMessageDocumentService, MessageDocumentService>();
+        services.AddSingleton<ICaseAdditionalPropertyGroupService, CaseAdditionalPropertyGroupService>();
 
         services.AddSingleton<TenantSelector>();
         services.AddSingleton<AdministratorAccountService>();
+        services.AddSingleton<DemoDataValidator>();
+        services.AddSingleton<DemoDataImporter>();
 
         return services;
     }
