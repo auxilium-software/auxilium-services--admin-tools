@@ -8,6 +8,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Services;
 
+public sealed record UserAccountDetails
+{
+    public required string EmailAddress { get; init; }
+    public required string FullName { get; init; }
+    public string LanguagePreference { get; init; } = "en-GB";
+    public string? TelephoneNumber { get; init; }
+    public string? FullAddress { get; init; }
+    public string? Gender { get; init; }
+    public DateOnly? DateOfBirth { get; init; }
+    public string? HowDidYouFindOutAboutOurService { get; init; }
+
+    public bool IsAdministrator { get; init; }
+    public bool IsCaseWorker { get; init; }
+    public bool IsCaseWorkerManager { get; init; }
+
+    public DateTime? CreatedAtUtc { get; init; }
+}
+
 public sealed class AdministratorAccountService(
     AuxiliumDbContext dbContext,
     ITenantContext tenantContext,
@@ -21,38 +39,38 @@ public sealed class AdministratorAccountService(
     public Task<UserEntityModel?> FindByEmailAddressAsync(string emailAddress, CancellationToken cancellationToken) =>
         dbContext.WithinTenancy_Users.FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
 
-    public async Task<UserEntityModel> CreateAdministratorAsync(
-        string emailAddress,
-        string fullName,
+    public async Task<UserEntityModel> CreateUserAsync(
+        UserAccountDetails details,
         string rawPassword,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         if (!tenantContext.IsResolved)
         {
-            throw new InvalidOperationException("A tenant must be pinned before creating an administrator.");
+            throw new InvalidOperationException("A tenant must be pinned before creating a user.");
         }
 
         var user = new UserEntityModel
         {
             Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_User),
-            CreatedAtUtc = DateTime.UtcNow,
+            CreatedAtUtc = details.CreatedAtUtc ?? DateTime.UtcNow,
             CreatedByUserId = null,
             LastUpdatedAtUtc = null,
             LastUpdatedByUserId = null,
 
-            EmailAddress = emailAddress,
+            EmailAddress = details.EmailAddress.Trim(),
             PasswordHash = HashPassword(rawPassword),
-            FullName = fullName,
-            FullAddress = null,
-            TelephoneNumber = null,
-            Gender = null,
-            DateOfBirth = null,
-            HowDidYouFindOutAboutOurService = null,
-            LanguagePreference = "en-GB",
+            FullName = details.FullName,
+            FullAddress = details.FullAddress,
+            TelephoneNumber = details.TelephoneNumber,
+            Gender = details.Gender,
+            DateOfBirth = details.DateOfBirth,
+            HowDidYouFindOutAboutOurService = details.HowDidYouFindOutAboutOurService,
+            LanguagePreference = details.LanguagePreference,
 
-            IsAdministrator = true,
-            IsCaseWorker = false,
-            IsCaseWorkerManager = false,
+            IsAdministrator = details.IsAdministrator,
+            IsCaseWorker = details.IsCaseWorker,
+            IsCaseWorkerManager = details.IsCaseWorkerManager,
             AllowLogin = true,
             MustChangePassword = false,
             HasEmailAddressBeenVerified = true,
@@ -63,12 +81,34 @@ public sealed class AdministratorAccountService(
         dbContext.WithinTenancy_Users.Add(user);
         await dbContext.SaveChangesAsync(cancellationToken);
 
+        return user;
+    }
+
+    public async Task<UserEntityModel> CreateAdministratorAsync(
+        string emailAddress,
+        string fullName,
+        string rawPassword,
+        CancellationToken cancellationToken
+    )
+    {
+        var user = await CreateUserAsync(
+            new UserAccountDetails
+            {
+                EmailAddress = emailAddress,
+                FullName = fullName,
+                IsAdministrator = true,
+            },
+            rawPassword,
+            cancellationToken
+        );
+
         await webApplicationFirewall.WhitelistUserAsync(
             user,
             "SYSTEM: Administrator created via the Admin Tools CLI.",
             adminUser: user,
             permanent: true,
-            ct: cancellationToken);
+            ct: cancellationToken
+        );
 
         return user;
     }
