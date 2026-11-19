@@ -1,0 +1,801 @@
+{
+    // Everything here is fictional: email addresses use example.org, phone numbers are from Ofcom's drama range (07700 900xxx), and postcodes end in "ZZ".
+    //
+    // Records refer to each other by "Ref". Times are relative to when the import runs:
+    //    "-21d" = 21 days ago
+    //    "+3d@10:30" = in 3 days at 10:30 (TimeZone below),
+    //    "0d" = now.
+    // Enum values use the C# member names (e.g. "Open", "Confidential", "NeedsAction").
+
+    "TimeZone": "Europe/London",
+    "DefaultActor": "manager-rhian",
+
+  "Users": [
+    // ----- staff -----
+    {
+      "Ref": "demo-admin",
+      "FullName": "Demo Administrator",
+      "EmailAddress": "admin@demo.example.org",
+      "Roles": [ "Administrator" ],
+      "CreatedAt": "-180d"
+    },
+    {
+      "Ref": "manager-rhian",
+      "FullName": "Rhian Morgan",
+      "EmailAddress": "rhian.morgan@demo.example.org",
+      "Roles": [ "CaseWorkerManager", "CaseWorker" ],
+      "LanguagePreference": "cy-GB",
+      "TelephoneNumber": "07700 900101",
+      "CreatedAt": "-175d"
+    },
+    {
+      "Ref": "worker-tom",
+      "FullName": "Tom Ellis",
+      "EmailAddress": "tom.ellis@demo.example.org",
+      "Roles": [ "CaseWorker" ],
+      "TelephoneNumber": "07700 900102",
+      "CreatedAt": "-170d"
+    },
+    {
+      "Ref": "worker-aled",
+      "FullName": "Aled Jenkins",
+      "EmailAddress": "aled.jenkins@demo.example.org",
+      "Roles": [ "CaseWorker" ],
+      "LanguagePreference": "cy-GB",
+      "TelephoneNumber": "07700 900103",
+      "CreatedAt": "-150d"
+    },
+    {
+      "Ref": "worker-priya",
+      "FullName": "Priya Shah",
+      "EmailAddress": "priya.shah@demo.example.org",
+      "Roles": [ "CaseWorker" ],
+      "TelephoneNumber": "07700 900104",
+      "CreatedAt": "-90d"
+    },
+
+    // ----- clients -----
+    {
+      "Ref": "client-gareth",
+      "FullName": "Gareth Hughes",
+      "EmailAddress": "gareth.hughes@demo.example.org",
+      "TelephoneNumber": "07700 900201",
+      "FullAddress": "4 Ffordd y Bryn, Aberystwyth, SY23 1ZZ",
+      "Gender": "Male",
+      "DateOfBirth": "1978-06-14",
+      "HowDidYouFindOutAboutOurService": "Referred by the Armed Forces Covenant officer at the council",
+      "CreatedAt": "-120d"
+    },
+    {
+      "Ref": "client-lowri",
+      "FullName": "Lowri Hughes",
+      "EmailAddress": "lowri.hughes@demo.example.org",
+      "LanguagePreference": "cy-GB",
+      "TelephoneNumber": "07700 900202",
+      "FullAddress": "4 Ffordd y Bryn, Aberystwyth, SY23 1ZZ",
+      "Gender": "Female",
+      "DateOfBirth": "1981-02-03",
+      "HowDidYouFindOutAboutOurService": "Through my husband's existing case",
+      "CreatedAt": "-40d"
+    },
+    {
+      "Ref": "client-megan",
+      "FullName": "Megan Davies",
+      "EmailAddress": "megan.davies@demo.example.org",
+      "LanguagePreference": "cy-GB",
+      "TelephoneNumber": "07700 900203",
+      "FullAddress": "Fflat 2, 9 Stryd Maengwyn, Machynlleth, SY20 8ZZ",
+      "Gender": "Female",
+      "DateOfBirth": "1969-11-22",
+      "HowDidYouFindOutAboutOurService": "Leaflet at the GP surgery",
+      "CreatedAt": "-75d"
+    },
+    {
+      "Ref": "client-john",
+      "FullName": "John Walker",
+      "EmailAddress": "john.walker@demo.example.org",
+      "TelephoneNumber": "07700 900204",
+      "FullAddress": "17 Heol y Gogledd, Aberystwyth, SY23 2ZZ",
+      "Gender": "Male",
+      "DateOfBirth": "1972-08-09",
+      "HowDidYouFindOutAboutOurService": "Search engine",
+      "CreatedAt": "-160d"
+    },
+    {
+      "Ref": "client-amira",
+      "FullName": "Amira Haddad",
+      "EmailAddress": "amira.haddad@demo.example.org",
+      "TelephoneNumber": "07700 900205",
+      "FullAddress": "Flat 5, 22 Penglais Road, Aberystwyth, SY23 3ZZ",
+      "Gender": "Female",
+      "DateOfBirth": "1994-04-30",
+      "HowDidYouFindOutAboutOurService": "Recommended by a friend",
+      "CreatedAt": "-30d"
+    },
+    {
+      "Ref": "client-dylan",
+      "FullName": "Dylan Roberts",
+      "EmailAddress": "dylan.roberts@demo.example.org",
+      "TelephoneNumber": "07700 900206",
+      "FullAddress": "Bwthyn Tŷ Gwyn, Tal-y-bont, SY24 5ZZ",
+      "Gender": "Male",
+      "DateOfBirth": "1988-12-01",
+      "HowDidYouFindOutAboutOurService": "Outreach session at the food bank",
+      "CreatedAt": "-2d"
+    },
+    {
+      "Ref": "client-sarah",
+      "FullName": "Sarah Thomas",
+      "EmailAddress": "sarah.thomas@demo.example.org",
+      "TelephoneNumber": "07700 900207",
+      "FullAddress": "31 Stryd y Popty, Aberystwyth, SY23 4ZZ",
+      "Gender": "Female",
+      "DateOfBirth": "1999-07-19",
+      "HowDidYouFindOutAboutOurService": "University students' union",
+      "CreatedAt": "-200d"
+    }
+  ],
+
+    "CaseAdditionalPropertyGroups": [
+        {
+            "Ref": "eligibility",
+            "CanonicalName": "eligibility",
+            "Translations": { "en-GB": "Eligibility", "cy-GB": "Cymhwysedd" }
+        },
+        {
+            "Ref": "referral",
+            "CanonicalName": "referral",
+            "Translations": { "en-GB": "Referral", "cy-GB": "Atgyfeiriad" }
+        }
+    ],
+
+    "CalendarEventCategories": [
+        {
+            "Ref": "appointment",
+            "CanonicalName": "client-appointment",
+            "ColourHex": "#2F6F65",
+            "Translations": { "en-GB": "Client appointment", "cy-GB": "Apwyntiad cleient" }
+        },
+        {
+            "Ref": "hearing",
+            "CanonicalName": "tribunal-hearing",
+            "ColourHex": "#B5452B",
+            "Translations": { "en-GB": "Tribunal hearing", "cy-GB": "Gwrandawiad tribiwnlys" }
+        },
+        {
+            "Ref": "team-meeting",
+            "CanonicalName": "team-meeting",
+            "ColourHex": "#3B5BA5",
+            "Translations": { "en-GB": "Team meeting", "cy-GB": "Cyfarfod tîm" }
+        },
+        {
+            "Ref": "outreach",
+            "CanonicalName": "outreach",
+            "ColourHex": "#C08A1E",
+            "Translations": { "en-GB": "Outreach", "cy-GB": "Allgymorth" }
+        }
+    ],
+
+  "Cases": [
+    // ----- 1. veterans: compensation scheme appeal (open, busy) -----
+    {
+      "Ref": "case-gareth-afcs",
+      "Title": "Armed Forces Compensation Scheme award appeal",
+      "Description": "Gareth was awarded a lower tariff level than expected for a knee injury sustained in service. Reconsideration upheld the original decision; we are supporting an appeal to the First-tier Tribunal (War Pensions and Armed Forces Compensation Chamber).",
+      "Status": "Open",
+      "Sensitivity": "Confidential",
+      "CreatedBy": "manager-rhian",
+      "CreatedAt": "-118d",
+      "Clients": [ "client-gareth" ],
+      "Workers": [ "manager-rhian", "worker-tom" ],
+      "AdditionalProperties": [
+        {
+          "Group": "eligibility",
+          "DisplayName": "Service leaver",
+          "Content": "Yes, left the Army in 2016"
+        },
+        {
+          "Group": "eligibility",
+          "DisplayName": "Income check",
+          "Content": "Passed"
+        },
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Council Armed Forces Covenant officer"
+        },
+        {
+          "DisplayName": "Tribunal reference",
+          "Content": "AFCS/DEMO/00417"
+        }
+      ],
+      "Messages": [
+        {
+          "From": "client-gareth",
+          "Subject": "Reconsideration letter",
+          "Content": "Hi, I've had the reconsideration decision back and they've kept it at the same level. Is there anything else we can do?",
+          "SentAt": "-60d@18:42"
+        },
+        {
+          "From": "worker-tom",
+          "Subject": "Re: Reconsideration letter",
+          "Content": "Thanks Gareth. Yes, you can appeal to the tribunal. I'll prepare the appeal form with you. Could you upload the decision letter and any physio reports you have?",
+          "SentAt": "-59d@09:15"
+        },
+        {
+          "From": "client-gareth",
+          "Subject": "Re: Reconsideration letter",
+          "Content": "Uploaded the decision letter. The physio reports are with my GP, I've asked for copies.",
+          "SentAt": "-57d@20:03"
+        },
+        {
+          "From": "worker-tom",
+          "Subject": "Hearing date confirmed",
+          "Content": "Good news, the tribunal has listed the hearing. It's in the calendar for you. We'll have a prep call the week before.",
+          "IsUrgent": true,
+          "SentAt": "-6d@14:20"
+        }
+      ],
+      "TimelineEntries": [
+        {
+          "OccurredAt": "-118d@10:00",
+          "Title": "Initial appointment",
+          "Description": "Took instructions. Client unhappy with tariff level awarded for knee injury."
+        },
+        {
+          "By": "worker-tom",
+          "OccurredAt": "-90d@11:30",
+          "Title": "Reconsideration requested",
+          "Description": "Submitted reconsideration request with client's statement."
+        },
+        {
+          "By": "worker-tom",
+          "OccurredAt": "-60d@09:00",
+          "Title": "Reconsideration outcome",
+          "Description": "Original decision upheld."
+        },
+        {
+          "By": "worker-tom",
+          "OccurredAt": "-50d@15:00",
+          "Title": "Appeal lodged",
+          "Description": "Notice of appeal sent to the tribunal with decision letter attached."
+        },
+        {
+          "By": "worker-tom",
+          "OccurredAt": "-6d@14:00",
+          "Title": "Hearing listed",
+          "Description": "Tribunal hearing listed; client informed."
+        }
+      ],
+      "Todos": [
+        {
+          "By": "worker-tom",
+          "Summary": "Chase GP for physio reports",
+          "Priority": "High",
+          "Status": "Completed",
+          "AssignedTo": "worker-tom",
+          "CreatedAt": "-57d",
+          "CompletionNote": "Reports received and uploaded."
+        },
+        {
+          "By": "worker-tom",
+          "Summary": "Draft submission bundle",
+          "Description": "Chronology, medical evidence, client statement.",
+          "Priority": "High",
+          "Status": "InProgress",
+          "AssignedTo": "worker-tom",
+          "Due": "+9d",
+          "CreatedAt": "-6d"
+        },
+        {
+          "Summary": "Book hearing prep call with Gareth",
+          "Priority": "Medium",
+          "AssignedTo": "worker-tom",
+          "Due": "+12d",
+          "CreatedAt": "-6d"
+        }
+      ]
+    },
+
+    // ----- 2. housing disrepair, joint clients (open) -----
+    {
+      "Ref": "case-hughes-disrepair",
+      "Title": "Damp and mould: landlord not carrying out repairs",
+      "Description": "Gareth and Lowri's privately rented home has persistent damp and mould in two bedrooms. The landlord has not responded to repeated requests. Advising on the landlord's obligations under the Renting Homes (Wales) Act 2016 and the fitness for human habitation requirements.",
+      "Status": "Open",
+      "Sensitivity": "Internal",
+      "CreatedBy": "worker-aled",
+      "CreatedAt": "-38d",
+      "Clients": [ "client-gareth", "client-lowri" ],
+      "Workers": [ "worker-aled" ],
+      "AdditionalProperties": [
+        {
+          "Group": "eligibility",
+          "DisplayName": "Income check",
+          "Content": "Passed"
+        },
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Existing client (household member)"
+        },
+        {
+          "DisplayName": "Occupation contract",
+          "Content": "Standard periodic, since 2021"
+        }
+      ],
+      "Messages": [
+        {
+          "From": "client-lowri",
+          "Subject": "Lluniau o'r llwydni",
+          "Content": "Dw i wedi tynnu lluniau o'r llwydni yn y ddwy ystafell wely. Ydych chi eisiau i mi eu llwytho i fyny yma?",
+          "SentAt": "-35d@19:10"
+        },
+        {
+          "From": "worker-aled",
+          "Subject": "Re: Lluniau o'r llwydni",
+          "Content": "Ydw, diolch Lowri. Llwythwch nhw i fyny os gwelwch yn dda, gyda dyddiad pob llun os yn bosib.",
+          "SentAt": "-34d@10:05"
+        },
+        {
+          "From": "worker-aled",
+          "Subject": "Letter to landlord sent",
+          "Content": "I've sent the formal letter to your landlord today. They have 14 days to respond before we look at next steps.",
+          "SentAt": "-20d@16:30"
+        }
+      ],
+      "TimelineEntries": [
+        {
+          "OccurredAt": "-38d@14:00",
+          "Title": "Initial appointment",
+          "Description": "Joint appointment with both clients. Photos and repair request history gathered."
+        },
+        {
+          "OccurredAt": "-20d@16:00",
+          "Title": "Formal letter sent",
+          "Description": "Letter to landlord setting out repair obligations and requesting a schedule of works."
+        },
+        {
+          "OccurredAt": "-3d@11:00",
+          "Title": "No response from landlord",
+          "Description": "Deadline passed without reply. Considering referral to the council's housing enforcement team."
+        }
+      ],
+      "Todos": [
+        {
+          "Summary": "Refer to council housing enforcement",
+          "Priority": "High",
+          "AssignedTo": "worker-aled",
+          "Due": "+2d",
+          "CreatedAt": "-3d"
+        },
+        {
+          "Summary": "Check whether rent repayment or compensation is worth pursuing",
+          "Priority": "Low",
+          "AssignedTo": "worker-aled",
+          "Due": "+21d",
+          "CreatedAt": "-3d"
+        }
+      ]
+    },
+
+    // ----- 3. welfare benefits, Welsh-language case (open) -----
+    {
+      "Ref": "case-megan-pip",
+      "Title": "Apêl PIP / PIP appeal",
+      "Description": "Megan's Personal Independence Payment claim was refused after assessment. Mandatory reconsideration was unsuccessful. Supporting an appeal to the First-tier Tribunal (Social Security and Child Support). Client prefers to correspond in Welsh.",
+      "Status": "Open",
+      "Sensitivity": "Confidential",
+      "CreatedBy": "worker-aled",
+      "CreatedAt": "-72d",
+      "Clients": [ "client-megan" ],
+      "Workers": [ "worker-aled" ],
+      "AdditionalProperties": [
+        {
+          "Group": "eligibility",
+          "DisplayName": "Income check",
+          "Content": "Passed"
+        },
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Self-referral (GP surgery leaflet)"
+        },
+        {
+          "DisplayName": "Preferred language",
+          "Content": "Cymraeg / Welsh"
+        }
+      ],
+      "Messages": [
+        {
+          "From": "client-megan",
+          "Subject": "Llythyr gan yr Adran Gwaith a Phensiynau",
+          "Content": "Diolch am eich help gyda'r apêl. Dw i wedi dod o hyd i'r llythyr gan yr Adran Gwaith a Phensiynau. A ddylwn i ei sganio a'i anfon atoch chi?",
+          "SentAt": "-65d@12:15"
+        },
+        {
+          "From": "worker-aled",
+          "Subject": "Re: Llythyr gan yr Adran Gwaith a Phensiynau",
+          "Content": "Diolch Megan. Ie, anfonwch gopi ataf drwy'r porth os gwelwch yn dda. Byddaf yn ei ychwanegu at eich ffeil achos.",
+          "SentAt": "-65d@15:40"
+        },
+        {
+          "From": "worker-aled",
+          "Subject": "Tystiolaeth feddygol",
+          "Content": "Rydw i wedi ysgrifennu at eich meddyg teulu i ofyn am lythyr cefnogol ar gyfer yr apêl.",
+          "SentAt": "-28d@10:20"
+        }
+      ],
+      "TimelineEntries": [
+        {
+          "OccurredAt": "-72d@10:00",
+          "Title": "Apwyntiad cyntaf / First appointment",
+          "Description": "Reviewed the PIP decision and mandatory reconsideration notice."
+        },
+        {
+          "OccurredAt": "-60d@09:30",
+          "Title": "Appeal submitted",
+          "Description": "SSCS1 appeal form submitted online with the mandatory reconsideration notice."
+        },
+        {
+          "OccurredAt": "-28d@10:00",
+          "Title": "Medical evidence requested",
+          "Description": "Wrote to GP requesting supporting letter."
+        }
+      ],
+      "Todos": [
+        {
+          "Summary": "Chase GP supporting letter",
+          "Priority": "Medium",
+          "AssignedTo": "worker-aled",
+          "Due": "-1d",
+          "CreatedAt": "-28d"
+        },
+        {
+          "Summary": "Prepare written submission once DWP response is received",
+          "Priority": "Medium",
+          "Status": "NeedsAction",
+          "AssignedTo": "worker-aled",
+          "CreatedAt": "-28d"
+        }
+      ]
+    },
+
+    // ----- 4. debt (open, recent) -----
+    {
+      "Ref": "case-amira-debt",
+      "Title": "Council tax arrears and priority debts",
+      "Description": "Amira has council tax arrears after a period of illness and reduced working hours. The council has obtained a liability order. Preparing a financial statement, checking Council Tax Reduction entitlement and negotiating an affordable repayment arrangement.",
+      "Status": "Open",
+      "Sensitivity": "Internal",
+      "CreatedBy": "manager-rhian",
+      "CreatedAt": "-28d",
+      "Clients": [ "client-amira" ],
+      "Workers": [ "worker-priya" ],
+      "AdditionalProperties": [
+        {
+          "Group": "eligibility",
+          "DisplayName": "Income check",
+          "Content": "Passed"
+        },
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Friend / word of mouth"
+        }
+      ],
+      "Messages": [
+        {
+          "From": "client-amira",
+          "Subject": "Letter from enforcement agents",
+          "Content": "I've just had a letter from enforcement agents about the council tax. I'm really worried, what should I do?",
+          "IsUrgent": true,
+          "SentAt": "-4d@08:55"
+        },
+        {
+          "From": "worker-priya",
+          "Subject": "Re: Letter from enforcement agents",
+          "Content": "Please don't worry, I've contacted the council today to ask them to hold enforcement while we put an offer together. Can you send me your last two payslips?",
+          "SentAt": "-4d@11:30"
+        }
+      ],
+      "TimelineEntries": [
+        {
+          "By": "worker-priya",
+          "OccurredAt": "-26d@13:00",
+          "Title": "Initial appointment",
+          "Description": "Gathered details of all debts. Council tax identified as the priority."
+        },
+        {
+          "By": "worker-priya",
+          "OccurredAt": "-4d@11:00",
+          "Title": "Council contacted",
+          "Description": "Requested a hold on enforcement pending a repayment offer."
+        }
+      ],
+      "Todos": [
+        {
+          "By": "worker-priya",
+          "Summary": "Complete financial statement",
+          "Priority": "Urgent",
+          "Status": "InProgress",
+          "AssignedTo": "worker-priya",
+          "Due": "+1d",
+          "CreatedAt": "-4d"
+        },
+        {
+          "By": "worker-priya",
+          "Summary": "Check Council Tax Reduction entitlement",
+          "Priority": "High",
+          "AssignedTo": "worker-priya",
+          "Due": "+3d",
+          "CreatedAt": "-4d"
+        }
+      ]
+    },
+
+    // ----- 5. new sign-up awaiting triage (staging) -----
+    {
+      "Ref": "case-dylan-new",
+      "Title": "New enquiry: tenancy and Universal Credit housing costs",
+      "Description": "Submitted via the online sign-up form after an outreach session. Client reports a shortfall between his rent and the housing element of Universal Credit. Awaiting triage.",
+      "Status": "Staging",
+      "Sensitivity": "Internal",
+      "CreatedBy": "manager-rhian",
+      "CreatedAt": "-2d",
+      "Clients": [ "client-dylan" ],
+      "Workers": [ "manager-rhian" ],
+      "AdditionalProperties": [
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Food bank outreach session"
+        }
+      ],
+      "Todos": [
+        {
+          "Summary": "Triage and allocate",
+          "Priority": "Medium",
+          "AssignedTo": "manager-rhian",
+          "Due": "+2d",
+          "CreatedAt": "-2d"
+        }
+      ]
+    },
+
+    // ----- 6. employment (closed) -----
+    {
+      "Ref": "case-john-employment",
+      "Title": "Redundancy: selection and redundancy pay",
+      "Description": "John was made redundant and believed the selection process was unfair and his redundancy pay was miscalculated. Advised on ACAS early conciliation and time limits. Settled through conciliation.",
+      "Status": "Closed",
+      "Sensitivity": "Internal",
+      "CreatedBy": "worker-tom",
+      "CreatedAt": "-155d",
+      "Clients": [ "client-john" ],
+      "Workers": [ "worker-tom" ],
+      "AdditionalProperties": [
+        {
+          "Group": "eligibility",
+          "DisplayName": "Income check",
+          "Content": "Passed"
+        },
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Self-referral (website)"
+        },
+        {
+          "DisplayName": "Outcome",
+          "Content": "Settled via ACAS COT3 agreement"
+        }
+      ],
+      "Messages": [
+        {
+          "From": "client-john",
+          "Subject": "Settlement accepted",
+          "Content": "Just to confirm I'm happy to accept the offer ACAS passed on. Thanks for all your help.",
+          "SentAt": "-100d@17:12"
+        },
+        {
+          "From": "worker-tom",
+          "Subject": "Re: Settlement accepted",
+          "Content": "Great news John. I'll let the conciliator know and close the case once the payment has gone through.",
+          "SentAt": "-99d@09:02"
+        }
+      ],
+      "TimelineEntries": [
+        {
+          "OccurredAt": "-155d@10:30",
+          "Title": "Initial appointment",
+          "Description": "Reviewed redundancy letter and selection scoring."
+        },
+        {
+          "OccurredAt": "-150d@12:00",
+          "Title": "Early conciliation started",
+          "Description": "ACAS early conciliation notification submitted."
+        },
+        {
+          "OccurredAt": "-100d@17:00",
+          "Title": "Settlement accepted",
+          "Description": "Client accepted the settlement offer."
+        },
+        {
+          "OccurredAt": "-85d@09:00",
+          "Title": "Case closed",
+          "Description": "Payment confirmed received. Closing letter sent."
+        }
+      ],
+      "Todos": [
+        {
+          "Summary": "Submit early conciliation notification",
+          "Priority": "Urgent",
+          "Status": "Completed",
+          "AssignedTo": "worker-tom",
+          "CreatedAt": "-155d",
+          "CompletionNote": "Submitted well within the time limit."
+        },
+        {
+          "Summary": "Send closing letter",
+          "Priority": "Low",
+          "Status": "Completed",
+          "AssignedTo": "worker-tom",
+          "CreatedAt": "-99d"
+        }
+      ]
+    },
+
+    // ----- 7. deposit dispute (archived) -----
+    {
+      "Ref": "case-sarah-deposit",
+      "Title": "Security deposit not protected",
+      "Description": "Student tenant's deposit was not protected in an authorised scheme. Advised on the landlord's obligations and options. Landlord returned the deposit in full after a letter before action.",
+      "Status": "Archived",
+      "Sensitivity": "Public",
+      "CreatedBy": "manager-rhian",
+      "CreatedAt": "-198d",
+      "Clients": [ "client-sarah" ],
+      "Workers": [ "manager-rhian" ],
+      "AdditionalProperties": [
+        {
+          "Group": "referral",
+          "DisplayName": "Referred by",
+          "Content": "Students' union advice centre"
+        },
+        {
+          "DisplayName": "Outcome",
+          "Content": "Deposit returned in full"
+        }
+      ],
+      "TimelineEntries": [
+        {
+          "OccurredAt": "-198d@15:00",
+          "Title": "Initial appointment",
+          "Description": "Confirmed deposit not registered with any scheme."
+        },
+        {
+          "OccurredAt": "-185d@10:00",
+          "Title": "Letter before action sent",
+          "Description": "Letter to landlord sent."
+        },
+        {
+          "OccurredAt": "-170d@10:00",
+          "Title": "Deposit returned",
+          "Description": "Client confirmed full deposit received. Case closed and archived."
+        }
+      ]
+    }
+  ],
+
+    "CalendarEvents": [
+        {
+            "Title": "Tribunal hearing: Gareth Hughes",
+            "Description": "AFCS appeal hearing. Bring the submission bundle.",
+            "Location": "Tribunal hearing centre (video link available)",
+            "Category": "hearing",
+            "Case": "case-gareth-afcs",
+            "CreatedBy": "worker-tom",
+            "Start": "+18d@10:00",
+            "End": "+18d@12:00",
+            "Invites": [
+                { "User": "client-gareth", "Status": "Accepted" },
+                { "User": "manager-rhian", "Status": "Tentative" }
+            ]
+        },
+        {
+            "Title": "Hearing prep call: Gareth Hughes",
+            "Category": "appointment",
+            "Case": "case-gareth-afcs",
+            "CreatedBy": "worker-tom",
+            "Start": "+12d@14:00",
+            "End": "+12d@14:45",
+            "Invites": [
+                { "User": "client-gareth", "Status": "Pending" }
+            ]
+        },
+        {
+            "Title": "Apwyntiad: Megan Davies",
+            "Description": "Adolygu'r dystiolaeth feddygol / Review medical evidence.",
+            "Location": "Machynlleth outreach room",
+            "Category": "appointment",
+            "Case": "case-megan-pip",
+            "CreatedBy": "worker-aled",
+            "Start": "+4d@11:00",
+            "End": "+4d@12:00",
+            "Invites": [
+                { "User": "client-megan", "Status": "Accepted" }
+            ]
+        },
+        {
+            "Title": "Financial statement appointment: Amira Haddad",
+            "Location": "Aberystwyth office",
+            "Category": "appointment",
+            "Case": "case-amira-debt",
+            "CreatedBy": "worker-priya",
+            "Start": "+1d@10:00",
+            "End": "+1d@11:00",
+            "Invites": [
+                { "User": "client-amira", "Status": "Accepted" }
+            ]
+        },
+        {
+            "Title": "Weekly team meeting",
+            "Description": "Case review and allocations.",
+            "Location": "Aberystwyth office / video call",
+            "Category": "team-meeting",
+            "CreatedBy": "manager-rhian",
+            "Start": "+2d@09:30",
+            "End": "+2d@10:30",
+            "Invites": [
+                { "User": "worker-tom", "Status": "Accepted" },
+                { "User": "worker-aled", "Status": "Accepted" },
+                { "User": "worker-priya", "Status": "Pending" }
+            ]
+        },
+        {
+            "Title": "Food bank outreach session",
+            "Location": "Community centre, Aberystwyth",
+            "Category": "outreach",
+            "CreatedBy": "manager-rhian",
+            "Start": "-3d@13:00",
+            "End": "-3d@16:00",
+            "Invites": [
+                { "User": "worker-priya", "Status": "Accepted" }
+            ]
+        },
+        {
+            "Title": "Staff training day",
+            "Description": "Renting Homes (Wales) Act refresher.",
+            "Category": "team-meeting",
+            "CreatedBy": "manager-rhian",
+            "Start": "+25d@00:00",
+            "End": "+26d@00:00",
+            "IsAllDay": true,
+            "Invites": [
+                { "User": "worker-tom", "Status": "Pending" },
+                { "User": "worker-aled", "Status": "Pending" },
+                { "User": "worker-priya", "Status": "Declined" }
+            ]
+        }
+    ],
+
+    "Bulletins": [
+        {
+            "Title": "Demo instance",
+            "Content": "This is a demonstration instance of Auxilium|3. All people, cases and contact details are fictional.",
+            "Severity": "Informational",
+            "TargetAudience": "Everyone",
+            "IsDismissible": true,
+            "StartsAt": "-30d"
+        },
+        {
+            "Title": "Planned maintenance",
+            "Content": "The portal may be briefly unavailable during planned maintenance this weekend.",
+            "Severity": "Warning",
+            "TargetAudience": "LoggedInUsersOnly",
+            "IsDismissible": true,
+            "StartsAt": "0d",
+            "EndsAt": "+5d"
+        }
+    ]
+}
