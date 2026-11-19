@@ -38,8 +38,8 @@ public sealed partial class RelativeDateTime
                 amount = -amount;
             }
 
-            var unit = match.Groups["unit"].Value;
-            var clock = match.Groups["clock"];
+            string unit = match.Groups["unit"].Value;
+            Group clock = match.Groups["clock"];
 
             if (clock.Success)
             {
@@ -48,8 +48,8 @@ public sealed partial class RelativeDateTime
                     return false;
                 }
 
-                var localToday = TimeZoneInfo.ConvertTimeFromUtc(_nowUtc, _timeZone).Date;
-                var localTarget = localToday.AddDays(amount) + timeOfDay;
+                DateTime localToday = TimeZoneInfo.ConvertTimeFromUtc(_nowUtc, _timeZone).Date;
+                DateTime localTarget = localToday.AddDays(amount) + timeOfDay;
                 utc = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(localTarget, DateTimeKind.Unspecified), _timeZone);
                 return true;
             }
