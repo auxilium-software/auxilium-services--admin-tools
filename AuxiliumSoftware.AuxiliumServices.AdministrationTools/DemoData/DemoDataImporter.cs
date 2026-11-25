@@ -67,11 +67,13 @@ public sealed class DemoDataImporter(
                     EmailAddress = demoUser.EmailAddress,
                     FullName = demoUser.FullName,
                     LanguagePreference = demoUser.LanguagePreference,
+                    /*
                     TelephoneNumber = demoUser.TelephoneNumber,
                     FullAddress = demoUser.FullAddress,
                     Gender = demoUser.Gender,
                     DateOfBirth = demoUser.DateOfBirth,
                     HowDidYouFindOutAboutOurService = demoUser.HowDidYouFindOutAboutOurService,
+                    */
                     IsAdministrator = demoUser.Roles.Contains(DemoUserRoleEnum.Administrator),
                     IsCaseWorker = demoUser.Roles.Contains(DemoUserRoleEnum.CaseWorker),
                     IsCaseWorkerManager = demoUser.Roles.Contains(DemoUserRoleEnum.CaseWorkerManager),

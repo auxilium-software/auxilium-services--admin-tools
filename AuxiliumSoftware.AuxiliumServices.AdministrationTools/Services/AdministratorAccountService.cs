@@ -13,11 +13,11 @@ public sealed record UserAccountDetails
     public required string EmailAddress { get; init; }
     public required string FullName { get; init; }
     public string LanguagePreference { get; init; } = "en-GB";
-    public string? TelephoneNumber { get; init; }
-    public string? FullAddress { get; init; }
-    public string? Gender { get; init; }
-    public DateOnly? DateOfBirth { get; init; }
-    public string? HowDidYouFindOutAboutOurService { get; init; }
+    // public string? TelephoneNumber { get; init; }
+    // public string? FullAddress { get; init; }
+    // public string? Gender { get; init; }
+    // public DateOnly? DateOfBirth { get; init; }
+    // public string? HowDidYouFindOutAboutOurService { get; init; }
 
     public bool IsAdministrator { get; init; }
     public bool IsCaseWorker { get; init; }
@@ -61,11 +61,13 @@ public sealed class AdministratorAccountService(
             EmailAddress = details.EmailAddress.Trim(),
             PasswordHash = HashPassword(rawPassword),
             FullName = details.FullName,
+            /*
             FullAddress = details.FullAddress,
             TelephoneNumber = details.TelephoneNumber,
             Gender = details.Gender,
             DateOfBirth = details.DateOfBirth,
             HowDidYouFindOutAboutOurService = details.HowDidYouFindOutAboutOurService,
+            */
             LanguagePreference = details.LanguagePreference,
 
             IsAdministrator = details.IsAdministrator,
