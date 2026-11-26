@@ -3,11 +3,11 @@ using System.Net;
 
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Seeding;
 
-internal static class TenantSeedDefinition
+internal static class InstanceSeedDefinition
 {
-    public const string ReasonForModification = "Set through the Admin Tools CLI during tenant creation.";
+    public const string ReasonForModification = "Set through the Admin Tools CLI during instance initialisation.";
 
-    public static readonly IReadOnlyList<TenantSettingSeed> PromptedSettings =
+    public static readonly IReadOnlyList<InstanceSettingSeed> PromptedSettings =
     [
         new(SystemSettingKeyEnum.Instance_Branding_Name),
         new(SystemSettingKeyEnum.Instance_Fqdn,                        SuggestFromDomain: domain => domain),
@@ -26,7 +26,7 @@ internal static class TenantSeedDefinition
     ];
 }
 
-internal sealed record TenantSettingSeed(
+internal sealed record InstanceSettingSeed(
     SystemSettingKeyEnum Key,
     Func<string, string>? SuggestFromDomain = null
 );

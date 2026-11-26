@@ -3,13 +3,10 @@ using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Configuration;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.DemoData;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Infrastructure;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Services;
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
 using AuxiliumSoftware.AuxiliumServices.Common.Configuration;
 using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using AuxiliumSoftware.AuxiliumServices.Common.Services;
 using AuxiliumSoftware.AuxiliumServices.Common.Services.Implementations;
-using AuxiliumSoftware.AuxiliumServices.Common.Tenancy;
-using AuxiliumSoftware.AuxiliumServices.Common.Tenancy.TenantLookup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,25 +47,22 @@ internal static class Program
             config.SetApplicationName("auxilium-admin-tools");
             config.PropagateExceptions();
 
-            config.AddCommand<ListTenantsCommand>("list-tenants")
-                .WithDescription("Lists every tenant on this instance.");
-
-            config.AddCommand<CreateTenantCommand>("create-tenant")
-                .WithDescription("Creates a tenant with its first administrator, settings, WAF whitelist and built-in enumerators.")
-                .WithExample("create-tenant", "--domain", "portal.example.org");
+            config.AddCommand<InitialiseInstanceCommand>("initialise-instance")
+                .WithDescription("Sets up a fresh instance with its first administrator, settings, WAF whitelist and built-in enumerators.")
+                .WithExample("initialise-instance", "--domain", "portal.example.org");
 
             config.AddCommand<CreateAdministratorUserCommand>("create-administrator-user")
-                .WithDescription("Creates an administrator user within a tenant.")
-                .WithExample("create-administrator-user", "--tenant", "portal.example.org");
+                .WithDescription("Creates an administrator user.")
+                .WithExample("create-administrator-user");
 
             config.AddCommand<ResetUserPasswordCommand>("reset-user-password")
-                .WithDescription("Resets a user's password within a tenant.")
-                .WithExample("reset-user-password", "--tenant", "portal.example.org");
+                .WithDescription("Resets a user's password.")
+                .WithExample("reset-user-password");
 
             config.AddCommand<PopulateWithDemoDataCommand>("populate-with-demo-data")
-                .WithDescription("Fills a tenant with fictional users, cases, messages and calendar events from a JSON file.")
-                .WithExample("populate-with-demo-data", "--tenant", "demo.example.org")
-                .WithExample("populate-with-demo-data", "--tenant", "demo.example.org", "--file", "./my-demo-data.json");
+                .WithDescription("Fills this instance with fictional users, cases, messages and calendar events from a JSON file.")
+                .WithExample("populate-with-demo-data")
+                .WithExample("populate-with-demo-data", "--file", "./my-demo-data.json");
         });
 
         WriteBanner();
@@ -99,11 +93,6 @@ internal static class Program
         // Common's services log through ILogger<T>; no providers are added, so nothing interrupts the Spectre UI
         services.AddLogging();
 
-        services.AddSingleton<TenantContextAccessor>();
-        services.AddSingleton<ITenantContext>(sp => sp.GetRequiredService<TenantContextAccessor>());
-        services.AddSingleton<ITenantContextSetter>(sp => sp.GetRequiredService<TenantContextAccessor>());
-        services.AddSingleton<ITenantLookup, TenantLookup>();
-
         var connectionString = AdminToolsConfiguration.BuildConnectionString(configuration.Databases.MariaDB);
         services.AddDbContext<AuxiliumDbContext>(
             options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
@@ -118,7 +107,6 @@ internal static class Program
         services.AddSingleton<IMessageDocumentService, MessageDocumentService>();
         services.AddSingleton<ICaseAdditionalPropertyGroupService, CaseAdditionalPropertyGroupService>();
 
-        services.AddSingleton<TenantSelector>();
         services.AddSingleton<AdministratorAccountService>();
         services.AddSingleton<DemoDataValidator>();
         services.AddSingleton<DemoDataImporter>();

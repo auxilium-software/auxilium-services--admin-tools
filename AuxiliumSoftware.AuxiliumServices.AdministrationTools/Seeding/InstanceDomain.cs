@@ -1,8 +1,8 @@
-namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
+namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Seeding;
 
-internal static class TenantDomain
+internal static class InstanceDomain
 {
-    // matches varchar(253) on g__tenancy__tenants.domain
+    // the maximum length of a DNS host name
     public const int MaxLength = 253;
 
     public static string Normalise(string domain) =>

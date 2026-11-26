@@ -1,8 +1,6 @@
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Settings;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Superclasses;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Interaction;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Services;
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
 using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -10,10 +8,9 @@ using Spectre.Console.Cli;
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands;
 
 public sealed class CreateAdministratorUserCommand(
-    TenantSelector tenantSelector,
     AuxiliumDbContext dbContext,
     AdministratorAccountService accountService
-) : TenantScopedAsyncCommand<TenantScopedCommandSettings>(tenantSelector)
+) : InitialisedInstanceAsyncCommand<EmptyCommandSettings>(dbContext)
 {
     protected override void WriteHeader()
     {
@@ -21,10 +18,9 @@ public sealed class CreateAdministratorUserCommand(
         AnsiConsole.WriteLine();
     }
 
-    protected override async Task<int> ExecuteWithinTenantAsync(
+    protected override async Task<int> ExecuteOnInstanceAsync(
         CommandContext context,
-        TenantScopedCommandSettings settings,
-        ResolvedTenant tenant,
+        EmptyCommandSettings settings,
         CancellationToken cancellationToken
     )
     {
@@ -32,7 +28,7 @@ public sealed class CreateAdministratorUserCommand(
 
         if (await accountService.EmailAddressExistsAsync(email, cancellationToken))
         {
-            AnsiConsole.MarkupLineInterpolated($"[red]Error: A user with email '{email}' already exists in {tenant.Domain}.[/]");
+            AnsiConsole.MarkupLineInterpolated($"[red]Error: A user with email '{email}' already exists.[/]");
             AnsiConsole.MarkupLine("[blue]Use reset-user-password if you need to get back into that account.[/]");
             return 1;
         }
@@ -48,7 +44,6 @@ public sealed class CreateAdministratorUserCommand(
         AnsiConsole.MarkupLine("[green]✓ Administrator created.[/]");
 
         var table = new Table().Border(TableBorder.Rounded).AddColumn("Field").AddColumn("Value");
-        table.AddRow("Tenant", Markup.Escape(tenant.Domain));
         table.AddRow("User ID", user.Id.ToString());
         table.AddRow("Email", Markup.Escape(email));
         table.AddRow("Name", Markup.Escape(fullName));

@@ -140,7 +140,7 @@ public sealed class DemoDataImporter(
 
             var caseEntity = new CaseEntityModel
             {
-                Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_Case),
+                Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.Case),
                 CreatedAtUtc = caseCreatedAt,
                 CreatedByUserId = owner.Id,
                 Title = demoCase.Title,
@@ -149,7 +149,7 @@ public sealed class DemoDataImporter(
                 Sensitivity = demoCase.Sensitivity,
             };
 
-            dbContext.WithinTenancy_Cases.Add(caseEntity);
+            dbContext.Cases.Add(caseEntity);
             await dbContext.SaveChangesAsync(cancellationToken);
             await caseDocuments.WriteToAuditLog(owner.Id, caseEntity.Id, AuditLogActionTypeEnum.Creation, CaseEntityTypeEnum.Case, caseEntity.Id, ct: cancellationToken);
             auditTimes[new AuditKey(caseEntity.Id, CaseEntityTypeEnum.Case, caseEntity.Id, AuditLogActionTypeEnum.Creation)] = caseCreatedAt;
@@ -197,7 +197,7 @@ public sealed class DemoDataImporter(
                 auditTimes[new AuditKey(caseEntity.Id, CaseEntityTypeEnum.Case_AdditionalProperty, propertyId, AuditLogActionTypeEnum.Creation)] = caseCreatedAt;
                 backdates.Add(() =>
                 {
-                    var entity = dbContext.WithinTenancy_CaseAdditionalProperties.Local.Single(p => p.Id == propertyId);
+                    var entity = dbContext.CaseAdditionalProperties.Local.Single(p => p.Id == propertyId);
                     entity.CreatedAtUtc = caseCreatedAt;
                 });
                 Count(nameof(DemoDataImportResult.CaseProperties));
@@ -310,7 +310,7 @@ public sealed class DemoDataImporter(
 
             var calendarEvent = new CalendarEventEntityModel
             {
-                Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_Calendar_Event),
+                Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.Calendar_Event),
                 CreatedAtUtc = createdAt,
                 CreatedByUserId = organiser.Id,
                 Title = demoEvent.Title,
@@ -323,13 +323,13 @@ public sealed class DemoDataImporter(
                 IsAllDay = demoEvent.IsAllDay,
             };
 
-            dbContext.WithinTenancy_CalendarEvents.Add(calendarEvent);
+            dbContext.CalendarEvents.Add(calendarEvent);
 
             foreach (var invite in demoEvent.Invites)
             {
-                dbContext.WithinTenancy_CalendarEventInvites.Add(new CalendarEventInviteEntityModel
+                dbContext.CalendarEventInvites.Add(new CalendarEventInviteEntityModel
                 {
-                    Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_Calendar_EventInvite),
+                    Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.Calendar_EventInvite),
                     CreatedAtUtc = createdAt,
                     CreatedByUserId = organiser.Id,
                     CalendarEventId = calendarEvent.Id,
@@ -348,9 +348,9 @@ public sealed class DemoDataImporter(
         {
             var startsAt = clock.Resolve(demoBulletin.StartsAt);
 
-            dbContext.WithinTenancy_System_Bulletins.Add(new SystemBulletinEntryEntityModel
+            dbContext.System_Bulletins.Add(new SystemBulletinEntryEntityModel
             {
-                Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_System_BulletinEntry),
+                Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.System_BulletinEntry),
                 CreatedAtUtc = Min(startsAt, clock.NowUtc),
                 CreatedByUserId = defaultActor.Id,
                 Title = demoBulletin.Title,

@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AuxiliumSoftware.AuxiliumServices.Common" Version="3.1.0-alpha261125" />
+		<PackageReference Include="AuxiliumSoftware.AuxiliumServices.Common" Version="3.1.0-alpha2611262315" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.18">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

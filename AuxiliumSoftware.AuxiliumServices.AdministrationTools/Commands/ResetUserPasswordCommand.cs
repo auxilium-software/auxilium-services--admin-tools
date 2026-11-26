@@ -1,8 +1,6 @@
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Settings;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Superclasses;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Interaction;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Services;
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
 using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -10,10 +8,9 @@ using Spectre.Console.Cli;
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands;
 
 public sealed class ResetUserPasswordCommand(
-    TenantSelector tenantSelector,
     AuxiliumDbContext dbContext,
     AdministratorAccountService accountService
-) : TenantScopedAsyncCommand<TenantScopedCommandSettings>(tenantSelector)
+) : InitialisedInstanceAsyncCommand<EmptyCommandSettings>(dbContext)
 {
     protected override void WriteHeader()
     {
@@ -21,10 +18,9 @@ public sealed class ResetUserPasswordCommand(
         AnsiConsole.WriteLine();
     }
 
-    protected override async Task<int> ExecuteWithinTenantAsync(
+    protected override async Task<int> ExecuteOnInstanceAsync(
         CommandContext context,
-        TenantScopedCommandSettings settings,
-        ResolvedTenant tenant,
+        EmptyCommandSettings settings,
         CancellationToken cancellationToken)
     {
         var email = Prompts.AskEmailAddress("User's email address");
@@ -32,7 +28,7 @@ public sealed class ResetUserPasswordCommand(
         var user = await accountService.FindByEmailAddressAsync(email, cancellationToken);
         if (user is null)
         {
-            AnsiConsole.MarkupLineInterpolated($"[red]Error: No user with email '{email}' in {tenant.Domain}.[/]");
+            AnsiConsole.MarkupLineInterpolated($"[red]Error: No user with email '{email}'.[/]");
             return 1;
         }
 
@@ -68,7 +64,6 @@ public sealed class ResetUserPasswordCommand(
         AnsiConsole.MarkupLine("[green]✓ Password reset.[/]");
 
         var table = new Table().Border(TableBorder.Rounded).AddColumn("Field").AddColumn("Value");
-        table.AddRow("Tenant", Markup.Escape(tenant.Domain));
         table.AddRow("User ID", user.Id.ToString());
         table.AddRow("Email", Markup.Escape(user.EmailAddress ?? ""));
         table.AddRow("Name", Markup.Escape(user.FullName));

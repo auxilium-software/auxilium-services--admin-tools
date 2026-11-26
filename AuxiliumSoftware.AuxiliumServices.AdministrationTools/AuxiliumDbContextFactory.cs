@@ -1,6 +1,5 @@
 ﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Configuration;
 using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
-using AuxiliumSoftware.AuxiliumServices.Common.Tenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -29,6 +28,6 @@ public class AuxiliumDbContextFactory : IDesignTimeDbContextFactory<AuxiliumDbCo
             b => b.MigrationsAssembly(typeof(AuxiliumDbContextFactory).Assembly.GetName().Name)
         );
 
-        return new AuxiliumDbContext(optionsBuilder.Options, new TenantContextAccessor());
+        return new AuxiliumDbContext(optionsBuilder.Options);
     }
 }

@@ -2,7 +2,6 @@ using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework.EntityModels;
 using AuxiliumSoftware.AuxiliumServices.Common.Enumerators;
 using AuxiliumSoftware.AuxiliumServices.Common.Services;
-using AuxiliumSoftware.AuxiliumServices.Common.Tenancy;
 using AuxiliumSoftware.AuxiliumServices.Common.Utilities;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,16 +27,15 @@ public sealed record UserAccountDetails
 
 public sealed class AdministratorAccountService(
     AuxiliumDbContext dbContext,
-    ITenantContext tenantContext,
     IPasswordService passwordService,
     IWebApplicationFirewallService webApplicationFirewall
 )
 {
     public Task<bool> EmailAddressExistsAsync(string emailAddress, CancellationToken cancellationToken) =>
-        dbContext.WithinTenancy_Users.AnyAsync(u => u.EmailAddress == emailAddress, cancellationToken);
+        dbContext.Users.AnyAsync(u => u.EmailAddress == emailAddress, cancellationToken);
 
     public Task<UserEntityModel?> FindByEmailAddressAsync(string emailAddress, CancellationToken cancellationToken) =>
-        dbContext.WithinTenancy_Users.FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
+        dbContext.Users.FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
 
     public async Task<UserEntityModel> CreateUserAsync(
         UserAccountDetails details,
@@ -45,14 +43,9 @@ public sealed class AdministratorAccountService(
         CancellationToken cancellationToken
     )
     {
-        if (!tenantContext.IsResolved)
-        {
-            throw new InvalidOperationException("A tenant must be pinned before creating a user.");
-        }
-
         var user = new UserEntityModel
         {
-            Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.WithinTenancy_User),
+            Id = UUIDUtilities.GenerateV5(DatabaseObjectTypeEnum.User),
             CreatedAtUtc = details.CreatedAtUtc ?? DateTime.UtcNow,
             CreatedByUserId = null,
             LastUpdatedAtUtc = null,
@@ -80,7 +73,7 @@ public sealed class AdministratorAccountService(
             DeletionRequestReason = null,
         };
 
-        dbContext.WithinTenancy_Users.Add(user);
+        dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return user;
@@ -124,7 +117,7 @@ public sealed class AdministratorAccountService(
     }
 
     public Task<int> RevokeRefreshTokensAsync(Guid userId, CancellationToken cancellationToken) =>
-        dbContext.WithinTenancy_UserRefreshTokens
+        dbContext.UserRefreshTokens
             .Where(t => t.CreatedByUserId == userId)
             .ExecuteDeleteAsync(cancellationToken);
 

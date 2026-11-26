@@ -11,7 +11,7 @@ namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.DemoData;
 public sealed partial class DemoDataValidator(AuxiliumDbContext dbContext)
 {
     public static string CalendarCategoryEnumeratorName =>
-        TenantSeedDefinition.DataEnumerators
+        InstanceSeedDefinition.DataEnumerators
             .Single(e => e.Scope == DataEnumeratorScopeEnum.CalendarEventCategory)
             .CanonicalName;
 
@@ -93,35 +93,35 @@ public sealed partial class DemoDataValidator(AuxiliumDbContext dbContext)
         }
 
         var emails = data.Users.Select(u => u.EmailAddress.Trim()).ToList();
-        var existingEmails = await dbContext.WithinTenancy_Users
+        var existingEmails = await dbContext.Users
             .Where(u => u.EmailAddress != null && emails.Contains(u.EmailAddress))
             .Select(u => u.EmailAddress!)
             .ToListAsync(cancellationToken);
 
         foreach (var email in existingEmails)
         {
-            errors.Add($"Users: '{email}' already exists in this tenant (has the demo data already been imported?).");
+            errors.Add($"Users: '{email}' already exists (has the demo data already been imported?).");
         }
 
         var groupNames = data.CaseAdditionalPropertyGroups.Select(g => g.CanonicalName).ToList();
-        foreach (var name in await dbContext.WithinTenancy_CaseAdditionalProperty_Groups
+        foreach (var name in await dbContext.CaseAdditionalProperty_Groups
             .Where(g => groupNames.Contains(g.CanonicalName))
             .Select(g => g.CanonicalName)
             .ToListAsync(cancellationToken))
         {
-            errors.Add($"CaseAdditionalPropertyGroups: a group named '{name}' already exists in this tenant.");
+            errors.Add($"CaseAdditionalPropertyGroups: a group named '{name}' already exists.");
         }
 
         if (data.CalendarEventCategories.Count > 0)
         {
             var enumeratorName = CalendarCategoryEnumeratorName;
-            var enumerator = await dbContext.WithinTenancy_DataEnumerator_Enumerators
+            var enumerator = await dbContext.DataEnumerator_Enumerators
                 .Include(e => e.EnumeratorValues)
                 .FirstOrDefaultAsync(e => e.CanonicalName == enumeratorName, cancellationToken);
 
             if (enumerator is null)
             {
-                errors.Add($"CalendarEventCategories: this tenant has no '{enumeratorName}' enumerator to add them to.");
+                errors.Add($"CalendarEventCategories: this instance has no '{enumeratorName}' enumerator to add them to.");
             }
             else
             {
@@ -130,7 +130,7 @@ public sealed partial class DemoDataValidator(AuxiliumDbContext dbContext)
                 foreach (var category in data.CalendarEventCategories
                     .Where(c => existingValues.Any(v => v.CanonicalName == c.CanonicalName)))
                 {
-                    errors.Add($"CalendarEventCategories[{category.Ref}]: '{category.CanonicalName}' already exists in this tenant.");
+                    errors.Add($"CalendarEventCategories[{category.Ref}]: '{category.CanonicalName}' already exists.");
                 }
             }
         }

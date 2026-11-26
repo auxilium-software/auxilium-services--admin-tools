@@ -1,8 +1,7 @@
-﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Settings;
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Superclasses;
+﻿using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands.Superclasses;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.DemoData;
 using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Interaction;
-using AuxiliumSoftware.AuxiliumServices.AdministrationTools.Tenancy;
+using AuxiliumSoftware.AuxiliumServices.Common.EntityFramework;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -10,12 +9,12 @@ using System.ComponentModel;
 namespace AuxiliumSoftware.AuxiliumServices.AdministrationTools.Commands;
 
 public sealed class PopulateWithDemoDataCommand(
-    TenantSelector tenantSelector,
+    AuxiliumDbContext dbContext,
     DemoDataValidator validator,
     DemoDataImporter importer
-) : TenantScopedAsyncCommand<PopulateWithDemoDataCommand.Settings>(tenantSelector)
+) : InitialisedInstanceAsyncCommand<PopulateWithDemoDataCommand.Settings>(dbContext)
 {
-    public sealed class Settings : TenantScopedCommandSettings
+    public sealed class Settings : CommandSettings
     {
         [CommandOption("-f|--file <PATH>")]
         [Description("Demo data JSON file. Defaults to the demo-data.jsonc shipped alongside the tool.")]
@@ -28,10 +27,9 @@ public sealed class PopulateWithDemoDataCommand(
         AnsiConsole.WriteLine();
     }
 
-    protected override async Task<int> ExecuteWithinTenantAsync(
+    protected override async Task<int> ExecuteOnInstanceAsync(
         CommandContext context,
         Settings settings,
-        ResolvedTenant tenant,
         CancellationToken cancellationToken
     )
     {
@@ -70,7 +68,7 @@ public sealed class PopulateWithDemoDataCommand(
         AnsiConsole.Write(summary);
 
         var confirmation = Prompts.AskConfirmation(
-            $"This will populate the tenant '{tenant.Domain}' with demo data. This is not easily reversible. Are you sure you want to continue?"
+            "This will populate this instance with demo data. This is not easily reversible. Are you sure you want to continue?"
         );
 
         if (!confirmation)
